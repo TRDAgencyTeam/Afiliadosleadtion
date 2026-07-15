@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel de Afiliados — Leadtion</title>
+<style>
+:root{
+  --bg:#fff;--bg2:#f5f5f4;--bg3:#e8e8e6;
+  --text:#1a1a18;--text2:#6b6b67;--text3:#9c9c98;
+  --border:#e0e0dc;--border2:#d0d0cc;
+  --green:#1D9E75;--green-bg:#E1F5EE;
+  --amber:#C07800;--amber-bg:#FFF3CD;
+  --red:#C0392B;--red-bg:#FDECEA;
+  --blue:#2563EB;--blue-bg:#EFF6FF;
+  --purple:#3C3489;--purple-bg:#EEEDFE;
+  --teal:#0F6E56;--teal-bg:#E1F5EE;
+  --orange:#B84500;--orange-bg:#FFF0E6;
+  --on-bg:#EAF3DE;--on-text:#3B6D11;
+  --off-bg:#F1EFE8;--off-text:#5F5E5A;
+  --r:8px;--sh:0 1px 3px rgba(0,0,0,.08);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg2);color:var(--text);font-size:14px;}
+.app{max-width:1120px;margin:0 auto;padding:24px 16px;}
+header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px;}
+header h1{font-size:20px;font-weight:600;}
+header p{font-size:13px;color:var(--text2);margin-top:2px;}
+.nav{display:flex;gap:0;margin-bottom:20px;border-bottom:1px solid var(--border);}
+.nav button{padding:9px 20px;border:none;border-bottom:2px solid transparent;background:transparent;color:var(--text2);font-size:14px;cursor:pointer;font-family:inherit;margin-bottom:-1px;}
+.nav button.active{color:var(--text);border-bottom-color:var(--text);font-weight:500;}
+.nav button:hover:not(.active){color:var(--text);}
+.tab{display:none;}.tab.active{display:block;}
+.metric-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:12px;margin-bottom:20px;}
+.metric{background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:14px;}
+.metric-label{font-size:12px;color:var(--text2);margin-bottom:6px;}
+.metric-value{font-size:22px;font-weight:600;}
+.green{color:var(--green);}.amber{color:var(--amber);}
+.section-title{font-size:14px;font-weight:600;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border);}
+.card{background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;margin-bottom:10px;box-shadow:var(--sh);}
+.card.inactive{opacity:.5;}
+.flex{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.flex-between{display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+.badge{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;white-space:nowrap;}
+.b-green{background:var(--green-bg);color:var(--green);}
+.b-amber{background:var(--amber-bg);color:var(--amber);}
+.b-blue{background:var(--blue-bg);color:var(--blue);}
+.b-purple{background:var(--purple-bg);color:var(--purple);}
+.b-teal{background:var(--teal-bg);color:var(--teal);}
+.b-orange{background:var(--orange-bg);color:var(--orange);}
+.b-on{background:var(--on-bg);color:var(--on-text);}
+.b-off{background:var(--off-bg);color:var(--off-text);}
+.b-gray{background:var(--bg3);color:var(--text2);}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border:1px solid var(--border2);border-radius:var(--r);background:var(--bg);color:var(--text);font-size:13px;cursor:pointer;font-family:inherit;white-space:nowrap;}
+.btn:hover{background:var(--bg2);}
+.btn-primary{background:var(--text);color:var(--bg);border-color:var(--text);}
+.btn-primary:hover{opacity:.85;}
+.btn-sm{padding:4px 10px;font-size:12px;}
+.btn-danger{color:var(--red);border-color:#fca5a5;}
+.btn-danger:hover{background:var(--red-bg);}
+.filter-bar{display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap;}
+.filter-btn{padding:5px 14px;border:1px solid var(--border2);border-radius:20px;background:transparent;color:var(--text2);font-size:13px;cursor:pointer;font-family:inherit;}
+.filter-btn.active{background:var(--text);color:var(--bg);border-color:var(--text);}
+.filter-btn:hover:not(.active){background:var(--bg2);}
+.level-bar{height:5px;background:var(--bg3);border-radius:4px;overflow:hidden;margin-top:6px;}
+.level-fill{height:100%;border-radius:4px;}
+.avatar{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;flex-shrink:0;background:var(--blue-bg);color:var(--blue);}
+.table-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th{text-align:left;font-size:12px;font-weight:600;color:var(--text2);padding:8px 10px;border-bottom:1px solid var(--border);white-space:nowrap;background:var(--bg2);}
+td{padding:9px 10px;border-bottom:1px solid var(--border);vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:var(--bg2);}
+.empty{text-align:center;color:var(--text2);padding:32px;font-size:14px;}
+.info-chip{display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--text2);background:var(--bg2);border-radius:var(--r);padding:3px 8px;margin:2px;}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:300;}
+.modal{background:var(--bg);border-radius:12px;padding:24px;width:560px;max-width:96vw;max-height:92vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,.18);}
+.modal h2{font-size:16px;font-weight:600;margin-bottom:16px;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+.form-group{display:flex;flex-direction:column;gap:5px;margin-bottom:10px;}
+.form-group label{font-size:12px;color:var(--text2);font-weight:500;}
+.hint{font-size:11px;color:var(--text3);margin-top:2px;}
+input,select{width:100%;padding:8px 10px;border:1px solid var(--border2);border-radius:var(--r);background:var(--bg);color:var(--text);font-size:14px;font-family:inherit;}
+input:focus,select:focus{outline:2px solid var(--blue);outline-offset:1px;border-color:transparent;}
+.modal-footer{display:flex;gap:8px;justify-content:flex-end;margin-top:16px;padding-top:12px;border-top:1px solid var(--border);}
+.hidden{display:none!important;}
+.info-box{background:var(--bg2);border-left:3px solid var(--blue);border-radius:var(--r);padding:10px 12px;font-size:12px;color:var(--text2);margin-bottom:10px;}
+.preview-box{background:var(--green-bg);border-left:3px solid var(--green);border-radius:var(--r);padding:10px 12px;font-size:13px;color:var(--green);margin-bottom:10px;}
+.mode-banner{display:flex;align-items:center;gap:8px;padding:6px 12px;border-radius:var(--r);font-size:12px;margin-bottom:16px;}
+.mode-server{background:var(--green-bg);color:var(--green);}
+.mode-local{background:var(--amber-bg);color:var(--amber);}
+.service-added-list{display:flex;flex-direction:column;gap:6px;margin-bottom:8px;}
+.service-item{display:grid;grid-template-columns:1fr auto auto auto;gap:8px;align-items:center;background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:8px 12px;font-size:13px;}
+.divider{border:none;border-top:1px solid var(--border);margin:14px 0;}
+#toast{position:fixed;bottom:24px;right:24px;background:var(--text);color:var(--bg);padding:10px 18px;border-radius:var(--r);font-size:13px;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div>
+      <h1>Panel de Afiliados — Leadtion</h1>
+      <p id="subtitle">Cargando...</p>
+    </div>
+    <div class="flex" style="gap:8px;">
+      <button class="btn" onclick="openModal('modalAfiliado')">+ Nuevo afiliado</button>
+      <button class="btn btn-primary" onclick="openModal('modalCliente')">+ Nuevo cliente</button>
+    </div>
+  </header>
+
+  <div id="mode-banner" class="mode-banner mode-local hidden">
+    <span>⚠️</span><span id="mode-text"></span>
+  </div>
+
+  <div class="nav">
+    <button class="active" onclick="showTab('dashboard',this)">Dashboard</button>
+    <button onclick="showTab('afiliados',this)">Afiliados</button>
+    <button onclick="showTab('clientes',this)">Clientes</button>
+    <button onclick="showTab('comisiones',this)">Comisiones</button>
+  </div>
+
+  <div id="tab-dashboard" class="tab active">
+    <div class="metric-grid" id="metrics"></div>
+    <div style="margin-bottom:24px;">
+      <div class="section-title">⚠️ Pendientes de pago — Mes actual</div>
+      <div id="pending-list"></div>
+    </div>
+    <div>
+      <div class="section-title">📅 Próximos pagos — Mes siguiente</div>
+      <div id="upcoming-list"></div>
+    </div>
+  </div>
+
+  <div id="tab-afiliados" class="tab">
+    <div class="filter-bar">
+      <span style="font-size:13px;color:var(--text2);">Mostrar:</span>
+      <button class="filter-btn active" onclick="setFilter('activos',this)">Activos</button>
+      <button class="filter-btn" onclick="setFilter('inactivos',this)">Inactivos</button>
+      <button class="filter-btn" onclick="setFilter('todos',this)">Todos</button>
+      <span id="filter-count" style="font-size:12px;color:var(--text2);"></span>
+    </div>
+    <div id="afiliados-list"></div>
+  </div>
+
+  <div id="tab-clientes" class="tab">
+    <div class="filter-bar">
+      <span style="font-size:13px;color:var(--text2);">Afiliado:</span>
+      <select id="cl-filter" onchange="renderClientes()" style="width:auto;padding:5px 10px;font-size:13px;"><option value="">Todos</option></select>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Cliente</th><th>Afiliado</th><th>Tipo</th><th>Servicios</th><th>Inicio</th><th>Bimestre</th><th>Licencia/mes</th><th>Total comisión</th><th>Acciones</th></tr></thead>
+        <tbody id="clientes-body"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div id="tab-comisiones" class="tab">
+    <div class="filter-bar">
+      <span style="font-size:13px;color:var(--text2);">Estado:</span>
+      <button class="filter-btn active" onclick="setComFilter('todos',this)">Todos</button>
+      <button class="filter-btn" onclick="setComFilter('pendiente',this)">Pendientes</button>
+      <button class="filter-btn" onclick="setComFilter('pagado',this)">Pagados</button>
+      <button class="filter-btn" onclick="setComFilter('programado',this)">Programados</button>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Afiliado</th><th>Tipo</th><th>Cliente</th><th>Mes</th><th>Concepto</th><th>% Com.</th><th>Monto</th><th>Estado</th><th>Acción</th></tr></thead>
+        <tbody id="comisiones-body"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Modal pagar -->
+<div id="modalPagar" class="overlay hidden">
+  <div class="modal">
+    <h2>💳 Registrar pago</h2>
+    <div id="pagar-info" class="info-box"></div>
+    <div class="form-row">
+      <div class="form-group"><label>Fecha de pago</label><input type="date" id="pagar-fecha"></div>
+      <div class="form-group"><label>Monto pagado ($)</label><input type="number" id="pagar-monto" step="0.01"></div>
+    </div>
+    <div id="pagar-file-wrap" class="form-group"><label>Comprobante (imagen o PDF)</label><input type="file" id="pagar-file" accept="image/*,.pdf"></div>
+    <div class="form-group"><label>Notas</label><input type="text" id="pagar-notas" placeholder="Ej: transferencia Nequi..."></div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('modalPagar')">Cancelar</button>
+      <button class="btn btn-primary" onclick="confirmarPago()">Confirmar pago</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal comprobante -->
+<div id="modalComprobante" class="overlay hidden">
+  <div class="modal">
+    <h2>🧾 Detalle del pago</h2>
+    <div id="comprobante-content"></div>
+    <div class="modal-footer"><button class="btn" onclick="closeModal('modalComprobante')">Cerrar</button></div>
+  </div>
+</div>
+
+<!-- Modal afiliado -->
+<div id="modalAfiliado" class="overlay hidden">
+  <div class="modal">
+    <h2 id="modal-af-title">Nuevo afiliado</h2>
+    <input type="hidden" id="af-id">
+    <div class="form-row">
+      <div class="form-group"><label>Nombre *</label><input type="text" id="af-nombre" placeholder="Nombre completo"></div>
+      <div class="form-group"><label>Email</label><input type="email" id="af-email" placeholder="correo@email.com"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Tipo de afiliado</label>
+        <select id="af-tipo" onchange="onAfTipoChange()">
+          <option value="agencia">Agencia</option>
+          <option value="partner">Partner</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Mes de ingreso</label><input type="date" id="af-ingreso"></div>
+    </div>
+    <div id="af-agencia-section">
+      <div class="divider"></div>
+      <div style="font-size:13px;font-weight:600;margin-bottom:8px;">⚙️ Comisión — Agencia</div>
+      <div class="info-box" style="margin-bottom:10px;">Mes 1: % sobre el servicio vendido. Meses 2 y 3: % por nivel sobre la licencia.</div>
+      <div class="form-group">
+        <label>% Comisión sobre servicios (mes 1)</label>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <input type="number" id="af-comision" placeholder="Ej: 5 o 10" min="0" max="100" step="0.1" style="width:120px;" oninput="updateAfPreview()">
+          <span style="color:var(--text2);">%</span>
+        </div>
+      </div>
+      <div id="af-preview" class="preview-box hidden"></div>
+    </div>
+    <div class="form-group"><label>Notas</label><input type="text" id="af-notas" placeholder="Opcional"></div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('modalAfiliado')">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarAfiliado()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal cliente -->
+<div id="modalCliente" class="overlay hidden">
+  <div class="modal">
+    <h2 id="modal-cl-title">Nuevo cliente</h2>
+    <input type="hidden" id="cl-id">
+    <div class="form-row">
+      <div class="form-group"><label>Nombre *</label><input type="text" id="cl-nombre" placeholder="Nombre completo"></div>
+      <div class="form-group"><label>Email</label><input type="email" id="cl-email" placeholder="correo@email.com"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Afiliado *</label><select id="cl-afiliado" onchange="onAfClienteChange()"></select></div>
+      <div class="form-group"><label>Fecha inicio membresía</label><input type="date" id="cl-fecha"></div>
+    </div>
+    <div class="form-group">
+      <label>Precio de la licencia mensual ($)</label>
+      <input type="number" id="cl-precio-lic" value="69" step="0.01" oninput="updateClPreview()">
+    </div>
+    <div class="divider"></div>
+    <div id="cl-servicios-section" class="hidden">
+      <div style="font-size:13px;font-weight:600;margin-bottom:6px;">🛠 Servicios contratados (mes 1)</div>
+      <div class="info-box" id="cl-srv-info" style="margin-bottom:10px;"></div>
+      <div id="cl-servicios-lista" class="service-added-list"></div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:12px;margin-bottom:8px;">
+        <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:8px;">+ Añadir servicio</div>
+        <div class="form-row" style="margin-bottom:8px;">
+          <div class="form-group" style="margin-bottom:0;">
+            <label>Tipo</label>
+            <select id="new-srv-tipo" onchange="onNewSrvTipoChange()">
+              <option value="reactivacion">Reactivación</option>
+              <option value="agente_ai">Agente AI</option>
+              <option value="text_ai">Text AI</option>
+              <option value="voz_ai">Voz AI</option>
+              <option value="otro">Otro</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label>Precio ($)</label>
+            <input type="number" id="new-srv-precio" placeholder="Ej: 797" step="0.01" min="0">
+          </div>
+        </div>
+        <div id="new-srv-nombre-wrap" class="form-group hidden" style="margin-bottom:8px;">
+          <label>Nombre personalizado</label>
+          <input type="text" id="new-srv-nombre" placeholder="Ej: Plan Pro...">
+        </div>
+        <button class="btn btn-sm" onclick="addServicio()">+ Añadir</button>
+      </div>
+    </div>
+    <div id="cl-preview" class="preview-box hidden"></div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('modalCliente')">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarCliente()">Guardar cliente</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ════════════════════════════════════════════════════════════
+// CAPA DE DATOS — detecta si hay servidor o usa localStorage
+// ════════════════════════════════════════════════════════════
+const IS_SERVER = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+
+const SEED_AFS = [
+  {id:'afl-1',nombre:'Carolina Zanabria',email:'',tipo:'agencia',ingreso:'2025-10-01',notas:'',comision_agencia:10},
+  {id:'afl-2',nombre:'Katherine Vargas',email:'',tipo:'partner',ingreso:'2025-11-01',notas:'',comision_agencia:-1},
+  {id:'afl-3',nombre:'Yamile Albornoz',email:'',tipo:'partner',ingreso:'2025-12-01',notas:'',comision_agencia:-1},
+  {id:'afl-4',nombre:'Catalina Smith',email:'',tipo:'partner',ingreso:'2026-03-01',notas:'',comision_agencia:-1},
+  {id:'afl-5',nombre:'Ivelisse',email:'',tipo:'partner',ingreso:'2026-06-01',notas:'',comision_agencia:-1},
+];
+const SEED_CLS = [
+  {id:'cl-1',nombre:'Karen Millan',email:'',afiliado_id:'afl-1',fecha_inicio:'octubre 2025',precio_licencia:67},
+  {id:'cl-2',nombre:'Nur Vega',email:'',afiliado_id:'afl-1',fecha_inicio:'noviembre 2025',precio_licencia:67},
+  {id:'cl-3',nombre:'Mylet',email:'',afiliado_id:'afl-1',fecha_inicio:'diciembre 2025',precio_licencia:67},
+  {id:'cl-4',nombre:'Yamile',email:'',afiliado_id:'afl-2',fecha_inicio:'noviembre 2025',precio_licencia:67},
+  {id:'cl-5',nombre:'Elisa Sandobal',email:'',afiliado_id:'afl-3',fecha_inicio:'diciembre 2025',precio_licencia:67},
+  {id:'cl-6',nombre:'Gonzalo Morales',email:'',afiliado_id:'afl-1',fecha_inicio:'enero 2026',precio_licencia:67},
+  {id:'cl-7',nombre:'Marcela Cazares',email:'',afiliado_id:'afl-4',fecha_inicio:'marzo 2026',precio_licencia:69},
+  {id:'cl-8',nombre:'Francisco Lara',email:'',afiliado_id:'afl-1',fecha_inicio:'mayo 2026',precio_licencia:69},
+  {id:'cl-9',nombre:'Yolanda Uzeta',email:'',afiliado_id:'afl-5',fecha_inicio:'junio 2026',precio_licencia:69},
+  {id:'cl-10',nombre:'Melida Cabral',email:'',afiliado_id:'afl-5',fecha_inicio:'junio 2026',precio_licencia:69},
+];
+const SEED_SRVS = [
+  {id:'srv-1',cliente_id:'cl-1',tipo:'text_ai',nombre_personalizado:'',precio:497},
+  {id:'srv-2',cliente_id:'cl-2',tipo:'text_ai',nombre_personalizado:'',precio:497},
+  {id:'srv-3',cliente_id:'cl-3',tipo:'text_ai',nombre_personalizado:'',precio:497},
+  {id:'srv-4',cliente_id:'cl-6',tipo:'voz_ai',nombre_personalizado:'',precio:730},
+  {id:'srv-5',cliente_id:'cl-7',tipo:'text_ai',nombre_personalizado:'',precio:598},
+  {id:'srv-6',cliente_id:'cl-8',tipo:'text_ai',nombre_personalizado:'',precio:797},
+  {id:'srv-7',cliente_id:'cl-9',tipo:'reactivacion',nombre_personalizado:'',precio:545},
+  {id:'srv-8',cliente_id:'cl-10',tipo:'reactivacion',nombre_personalizado:'',precio:545},
+];
+
+// Pagos históricos — todo antes de mayo 2026 + Catalina completa
+function buildSeedPagos(){
+  const MONTHS_ES=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  function parseMonthKey(s){if(!s)return null;const p=s.trim().split(' ');const mi=MONTHS_ES.indexOf(p[0].toLowerCase());if(mi===-1)return null;return new Date(parseInt(p[1]),mi,1);}
+  function addMonths(d,n){const x=new Date(d);x.setMonth(x.getMonth()+n);return x;}
+  const CUTOFF=new Date(2026,4,1);
+  const pagos=[];
+  SEED_CLS.forEach(cl=>{
+    const af=SEED_AFS.find(a=>a.id===cl.afiliado_id);
+    const isAgencia=af&&af.tipo==='agencia';
+    const start=parseMonthKey(cl.fecha_inicio);if(!start)return;
+    for(let i=0;i<3;i++){
+      const mesDate=addMonths(start,i);
+      const isCatalina=cl.afiliado_id==='afl-4';
+      const isPaid=isCatalina||mesDate<CUTOFF;
+      if(!isPaid)continue;
+      const lic=parseFloat(cl.precio_licencia)||69;
+      const li=levelInfo(1);
+      let monto;
+      if(i===0&&isAgencia){
+        const srv=SEED_SRVS.find(s=>s.cliente_id===cl.id);
+        const pct=(af.comision_agencia>0)?af.comision_agencia/100:0.30;
+        monto=srv?parseFloat((srv.precio*pct).toFixed(2)):parseFloat((lic*0.30).toFixed(2));
+      }else{monto=parseFloat((lic*0.30).toFixed(2));}
+      pagos.push({id:`pago-${cl.id}-${i}`,cliente_id:cl.id,mes_num:i,fecha_pago:isCatalina?'2026-05-27':'2026-04-30',monto,notas:isCatalina?'Pagado completo':'Pagado antes de mayo 2026',comprobante_path:'',comprobante_nombre:''});
+    }
+  });
+  return pagos;
+}
+
+// DB local en localStorage
+const LS = {
+  get(k){try{return JSON.parse(localStorage.getItem('leadtion_'+k))||null;}catch{return null;}},
+  set(k,v){localStorage.setItem('leadtion_'+k,JSON.stringify(v));},
+  init(){
+    if(!this.get('afs'))this.set('afs',SEED_AFS);
+    if(!this.get('cls'))this.set('cls',SEED_CLS);
+    if(!this.get('srvs'))this.set('srvs',SEED_SRVS);
+    if(!this.get('pagos'))this.set('pagos',buildSeedPagos());
+  }
+};
+
+// API unificada — usa servidor si está local, localStorage si es GitHub
+const DB = {
+  async getAfs(){if(IS_SERVER)return fetch('/api/afiliados').then(r=>r.json());return LS.get('afs')||[];},
+  async getCls(){if(IS_SERVER)return fetch('/api/clientes').then(r=>r.json());return LS.get('cls')||[];},
+  async getSrvs(){if(IS_SERVER)return fetch('/api/servicios').then(r=>r.json());return LS.get('srvs')||[];},
+  async getPagos(){if(IS_SERVER)return fetch('/api/pagos').then(r=>r.json());return LS.get('pagos')||[];},
+
+  async saveAf(data,id){
+    if(IS_SERVER){
+      const url=id?`/api/afiliados/${id}`:'/api/afiliados';
+      return fetch(url,{method:id?'PUT':'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)}).then(r=>r.json());
+    }
+    let afs=LS.get('afs')||[];
+    if(id){afs=afs.map(a=>a.id===id?{...a,...data}:a);}
+    else{afs.push({...data,id:'afl-'+Date.now(),creado_en:new Date().toISOString()});}
+    LS.set('afs',afs);return{ok:true};
+  },
+  async delAf(id){
+    if(IS_SERVER)return fetch(`/api/afiliados/${id}`,{method:'DELETE'}).then(r=>r.json());
+    LS.set('afs',(LS.get('afs')||[]).filter(a=>a.id!==id));return{ok:true};
+  },
+
+  async saveCl(data,id){
+    if(IS_SERVER){
+      const url=id?`/api/clientes/${id}`:'/api/clientes';
+      return fetch(url,{method:id?'PUT':'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)}).then(r=>r.json());
+    }
+    let cls=LS.get('cls')||[];
+    const srvs=data.servicios||[];
+    const clData={nombre:data.nombre,email:data.email,afiliado_id:data.afiliado_id,fecha_inicio:data.fecha_inicio,precio_licencia:data.precio_licencia};
+    let newId=id;
+    if(id){cls=cls.map(c=>c.id===id?{...c,...clData}:c);}
+    else{newId='cl-'+Date.now();cls.push({...clData,id:newId,creado_en:new Date().toISOString()});}
+    LS.set('cls',cls);
+    // Servicios
+    let allSrvs=(LS.get('srvs')||[]).filter(s=>s.cliente_id!==newId);
+    srvs.forEach((s,i)=>allSrvs.push({...s,id:'srv-'+Date.now()+'-'+i,cliente_id:newId}));
+    LS.set('srvs',allSrvs);
+    return{ok:true,id:newId};
+  },
+  async delCl(id){
+    if(IS_SERVER)return fetch(`/api/clientes/${id}`,{method:'DELETE'}).then(r=>r.json());
+    LS.set('cls',(LS.get('cls')||[]).filter(c=>c.id!==id));
+    LS.set('srvs',(LS.get('srvs')||[]).filter(s=>s.cliente_id!==id));
+    return{ok:true};
+  },
+
+  async savePago(data,file){
+    if(IS_SERVER){
+      const fd=new FormData();
+      Object.entries(data).forEach(([k,v])=>fd.append(k,v));
+      if(file)fd.append('comprobante',file);
+      return fetch('/api/pagos',{method:'POST',body:fd}).then(r=>r.json());
+    }
+    // localStorage: convertir imagen a base64 si hay
+    const finalize=(comp,nombre)=>{
+      let pagos=LS.get('pagos')||[];
+      pagos=pagos.filter(p=>!(p.cliente_id===data.cliente_id&&p.mes_num==data.mes_num));
+      pagos.push({...data,id:'pago-'+Date.now(),comprobante_path:comp||'',comprobante_nombre:nombre||''});
+      LS.set('pagos',pagos);return{ok:true};
+    };
+    if(file){
+      return new Promise(res=>{
+        const r=new FileReader();
+        r.onload=e=>res(finalize(e.target.result,file.name));
+        r.readAsDataURL(file);
+      });
+    }
+    return finalize('','');
+  }
+};
+
+// ════════════════════════════════════════════════════════════
+// LÓGICA DE NEGOCIO
+// ════════════════════════════════════════════════════════════
+const MONTHS_ES=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+const NOW=new Date();
+let _afs=[],_cls=[],_srvs=[],_pagos=[];
+let _afFilter='activos',_comFilter='todos',_pagarKey=null,_newServicios=[];
+
+const SRV_LABELS={reactivacion:'Reactivación',agente_ai:'Agente AI',text_ai:'Text AI',voz_ai:'Voz AI',otro:'Personalizado'};
+const SRV_BADGES={reactivacion:'b-amber',agente_ai:'b-purple',text_ai:'b-teal',voz_ai:'b-teal',otro:'b-orange'};
+
+function toast(msg,ms=2800){const t=document.getElementById('toast');t.textContent=msg;t.style.opacity='1';setTimeout(()=>t.style.opacity='0',ms);}
+function monthKey(d){return`${MONTHS_ES[d.getMonth()]} ${d.getFullYear()}`;}
+function parseMonthKey(s){if(!s)return null;const p=s.trim().split(' ');const mi=MONTHS_ES.indexOf(p[0].toLowerCase());if(mi===-1)return null;return new Date(parseInt(p[1]),mi,1);}
+function addMonths(d,n){const x=new Date(d);x.setMonth(x.getMonth()+n);return x;}
+function initials(n){return n.split(' ').slice(0,2).map(w=>w[0]?.toUpperCase()||'').join('');}
+function fmtDate(s){if(!s)return'—';const d=new Date(s.includes('T')?s:s+'T00:00:00');return d.toLocaleDateString('es-MX',{day:'2-digit',month:'short',year:'numeric'});}
+function fmt$(n){return'$'+(parseFloat(n)||0).toFixed(2);}
+function levelInfo(n){
+  if(n<=3)return{nivel:1,pct:0.30,next:4,label:'Nivel 1',color:'#2563EB'};
+  if(n<=6)return{nivel:2,pct:0.40,next:7,label:'Nivel 2',color:'#1D9E75'};
+  return{nivel:3,pct:0.50,next:null,label:'Nivel 3',color:'#C05621'};
+}
+function bimestreStart(){const m=NOW.getMonth();return new Date(NOW.getFullYear(),Math.floor(m/2)*2,1);}
+function isClienteOn(cl){const d=parseMonthKey(cl.fecha_inicio);if(!d)return false;const bs=bimestreStart();return d>=bs&&d<addMonths(bs,2);}
+function getActiveCount(afId){const bs=bimestreStart();return _cls.filter(c=>{if(c.afiliado_id!==afId)return false;const d=parseMonthKey(c.fecha_inicio);return d&&d>=bs;}).length;}
+function isAfiliadoActivo(af){return getActiveCount(af.id)>0;}
+function getLicenciaPct(af){return levelInfo(getActiveCount(af?.id||'')).pct;}
+function getAgenciaServicioPct(af){const ca=parseFloat(af?.comision_agencia);return(ca>0)?ca/100:null;}
+
+function calcComisionesCliente(cl,af){
+  const lic=parseFloat(cl.precio_licencia)||69;
+  const isAgencia=af&&af.tipo==='agencia';
+  const licPct=getLicenciaPct(af);
+  const clSrvs=_srvs.filter(s=>s.cliente_id===cl.id);
+  const start=parseMonthKey(cl.fecha_inicio);
+  if(!start)return[];
+  const rows=[];
+  for(let i=0;i<3;i++){
+    const mesDate=addMonths(start,i);
+    let concepto,monto,pct;
+    if(i===0&&isAgencia&&clSrvs.length>0){
+      const agPct=getAgenciaServicioPct(af);
+      const totalSrv=clSrvs.reduce((s,x)=>s+parseFloat(x.precio||0),0);
+      pct=agPct!==null?agPct:licPct;
+      monto=parseFloat((totalSrv*pct).toFixed(2));
+      const names=clSrvs.map(s=>SRV_LABELS[s.tipo]||s.tipo).join(' + ');
+      concepto=`${names} (${(pct*100).toFixed(1)}% / ${fmt$(totalSrv)})`;
+    }else if(i===0&&isAgencia&&clSrvs.length===0){
+      pct=licPct;monto=parseFloat((lic*pct).toFixed(2));
+      concepto=`Licencia mes 1 (${(pct*100).toFixed(0)}%)`;
+    }else{
+      pct=licPct;monto=parseFloat((lic*pct).toFixed(2));
+      concepto=`Licencia mes ${i+1} (${(pct*100).toFixed(0)}%)`;
+    }
+    const pago=_pagos.find(p=>p.cliente_id===cl.id&&parseInt(p.mes_num)===i)||null;
+    rows.push({key:`${cl.id}-${i}`,clienteId:cl.id,clienteNombre:cl.nombre,afiliado:af,mes:monthKey(mesDate),mesDate,monto,mesIdx:i,concepto,pct,pagado:!!pago,pago});
+  }
+  return rows;
+}
+
+function getAllComisiones(){
+  const rows=[];
+  _cls.forEach(cl=>{const af=_afs.find(a=>a.id===cl.afiliado_id);if(!af)return;calcComisionesCliente(cl,af).forEach(r=>rows.push(r));});
+  return rows;
+}
+
+async function loadAll(){
+  if(!IS_SERVER)LS.init();
+  try{
+    const[ra,rc,rs,rp]=await Promise.all([DB.getAfs(),DB.getCls(),DB.getSrvs(),DB.getPagos()]);
+    _afs=ra;_cls=rc;_srvs=rs;_pagos=rp;
+    const bs=bimestreStart();
+    document.getElementById('subtitle').textContent=`${monthKey(NOW)} · Bimestre ${MONTHS_ES[bs.getMonth()]}–${MONTHS_ES[bs.getMonth()+1]} ${bs.getFullYear()}`;
+    const banner=document.getElementById('mode-banner');
+    if(!IS_SERVER){
+      banner.classList.remove('hidden','mode-server');
+      banner.classList.add('mode-local');
+      document.getElementById('mode-text').textContent='Modo demo (GitHub Pages) — los datos se guardan en este navegador. Para producción usa el servidor local.';
+    }
+    render();
+  }catch(e){document.getElementById('subtitle').textContent='Error al cargar datos';}
+}
+
+// ════════════════════════════════════════════════════════════
+// UI
+// ════════════════════════════════════════════════════════════
+function showTab(id,btn){document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));document.getElementById('tab-'+id).classList.add('active');btn.classList.add('active');}
+function openModal(id){document.getElementById(id).classList.remove('hidden');}
+function closeModal(id){document.getElementById(id).classList.add('hidden');}
+function setFilter(f,btn){_afFilter=f;document.querySelectorAll('#tab-afiliados .filter-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderAfiliados();}
+function setComFilter(f,btn){_comFilter=f;document.querySelectorAll('#tab-comisiones .filter-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderComisiones();}
+
+function render(){
+  renderMetrics();renderDashboard();renderAfiliados();renderClientes();renderComisiones();
+  const sel=document.getElementById('cl-afiliado');
+  if(sel){sel.innerHTML=_afs.map(a=>`<option value="${a.id}">${a.nombre} (${a.tipo})</option>`).join('');onAfClienteChange();}
+  const fsel=document.getElementById('cl-filter');
+  if(fsel){const cur=fsel.value;fsel.innerHTML='<option value="">Todos</option>'+_afs.map(a=>`<option value="${a.id}">${a.nombre}</option>`).join('');fsel.value=cur;}
+  if(!IS_SERVER){const fw=document.getElementById('pagar-file-wrap');if(fw)fw.classList.add('hidden');}
+}
+
+function renderMetrics(){
+  const todas=getAllComisiones();const mk=monthKey(NOW);
+  const pend=todas.filter(c=>c.mes===mk&&!c.pagado).reduce((s,c)=>s+c.monto,0);
+  const pag=todas.filter(c=>c.mes===mk&&c.pagado).reduce((s,c)=>s+c.monto,0);
+  document.getElementById('metrics').innerHTML=`
+    <div class="metric"><div class="metric-label">Afiliados activos</div><div class="metric-value">${_afs.filter(isAfiliadoActivo).length}</div></div>
+    <div class="metric"><div class="metric-label">Clientes totales</div><div class="metric-value">${_cls.length}</div></div>
+    <div class="metric"><div class="metric-label">Pendiente este mes</div><div class="metric-value amber">${fmt$(pend)}</div></div>
+    <div class="metric"><div class="metric-label">Pagado este mes</div><div class="metric-value green">${fmt$(pag)}</div></div>
+  `;
+}
+
+function comCard(c,showPay){
+  const tipB=c.afiliado.tipo==='agencia'?'<span class="badge b-purple">Agencia</span>':'<span class="badge b-teal">Partner</span>';
+  return`<div class="card"><div class="flex-between">
+    <div>
+      <div class="flex" style="margin-bottom:4px;"><strong>${c.clienteNombre}</strong></div>
+      <div style="font-size:12px;color:var(--text2);">${c.afiliado.nombre} ${tipB} · ${c.concepto} · ${c.mes}</div>
+    </div>
+    <div class="flex" style="gap:8px;">
+      <strong>${fmt$(c.monto)}</strong>
+      ${showPay&&!c.pagado?`<button class="btn btn-primary btn-sm" onclick="abrirPagar('${c.key}')">💳 Pagar</button>`:''}
+      ${c.pagado?`<span class="badge b-green" style="cursor:pointer;" onclick="verComprobante('${c.clienteId}',${c.mesIdx})">✓ Pagado${c.pago?.fecha_pago?' · '+fmtDate(c.pago.fecha_pago):''}</span>`:''}
+    </div>
+  </div></div>`;
+}
+
+function renderDashboard(){
+  const todas=getAllComisiones();const mk=monthKey(NOW);const nk=monthKey(addMonths(NOW,1));
+  const pend=todas.filter(c=>c.mes===mk&&!c.pagado);const prox=todas.filter(c=>c.mes===nk&&!c.pagado);
+  document.getElementById('pending-list').innerHTML=pend.length?pend.map(c=>comCard(c,true)).join(''):'<div class="empty">✅ Sin comisiones pendientes este mes</div>';
+  document.getElementById('upcoming-list').innerHTML=prox.length?prox.map(c=>comCard(c,false)).join(''):'<div class="empty">Sin pagos programados para el mes siguiente</div>';
+}
+
+function renderAfiliados(){
+  const todas=getAllComisiones();const bs=bimestreStart();
+  let lista=_afs;
+  if(_afFilter==='activos')lista=_afs.filter(isAfiliadoActivo);
+  if(_afFilter==='inactivos')lista=_afs.filter(a=>!isAfiliadoActivo(a));
+  document.getElementById('filter-count').textContent=`${lista.length} afiliado${lista.length!==1?'s':''}`;
+  document.getElementById('afiliados-list').innerHTML=lista.map(af=>{
+    const msCls=_cls.filter(c=>c.afiliado_id===af.id);
+    const ac=getActiveCount(af.id);const li=levelInfo(ac);const activo=isAfiliadoActivo(af);
+    const pendCom=todas.filter(c=>c.afiliado.id===af.id&&!c.pagado).reduce((s,c)=>s+c.monto,0);
+    const prev=li.nivel===1?0:li.nivel===2?3:6;const range=(li.next||prev+3)-prev;
+    const pctBar=li.next?Math.min(((ac-prev)/range)*100,100):100;
+    const tipB=af.tipo==='agencia'?'<span class="badge b-purple">Agencia</span>':'<span class="badge b-teal">Partner</span>';
+    const estB=activo?'<span class="badge b-green">Activo</span>':'<span class="badge b-gray">Inactivo</span>';
+    const ing=af.ingreso?new Date(af.ingreso+'T00:00:00').toLocaleDateString('es-MX',{month:'long',year:'numeric'}):'';
+    const isAgencia=af.tipo==='agencia';const agPct=getAgenciaServicioPct(af);
+    const comBadge=isAgencia?(agPct!==null?`<span class="badge b-orange">Srv: ${(agPct*100).toFixed(1)}% · Lic: ${(li.pct*100).toFixed(0)}%</span>`:`<span class="badge b-gray">Srv: pendiente · Lic: ${(li.pct*100).toFixed(0)}%</span>`):`<span class="badge b-blue">${li.label} · ${(li.pct*100).toFixed(0)}%</span>`;
+    return`<div class="card${activo?'':' inactive'}">
+      <div class="flex-between" style="margin-bottom:12px;">
+        <div class="flex"><div class="avatar">${initials(af.nombre)}</div>
+          <div><div style="font-weight:600;font-size:15px;">${af.nombre}</div>
+          <div style="font-size:12px;color:var(--text2);">${ing?'Desde '+ing+' · ':""}Bimestre: ${MONTHS_ES[bs.getMonth()]}–${MONTHS_ES[bs.getMonth()+1]} ${bs.getFullYear()}</div></div>
+        </div>
+        <div class="flex" style="gap:6px;">${estB}${tipB}${comBadge}<button class="btn btn-sm" onclick="editAfiliado('${af.id}')">✏️</button></div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px;">
+        <div class="metric"><div class="metric-label">Clientes totales</div><div style="font-size:18px;font-weight:600;">${msCls.length}</div></div>
+        <div class="metric"><div class="metric-label">Activos bimestre</div><div style="font-size:18px;font-weight:600;color:${activo?'var(--green)':'var(--text2)'};">${ac}</div></div>
+        <div class="metric"><div class="metric-label">Pendiente pago</div><div style="font-size:18px;font-weight:600;color:${pendCom>0?'var(--amber)':'var(--green)'};">${fmt$(pendCom)}</div></div>
+      </div>
+      ${!isAgencia||agPct===null?`<div style="font-size:12px;color:var(--text2);margin-bottom:5px;">${li.next?`${ac}/${li.next} para ${li.nivel===1?'Nivel 2':'Nivel 3'}`:'🏆 Nivel máximo'}</div><div class="level-bar"><div class="level-fill" style="width:${pctBar}%;background:${li.color};"></div></div>`:`<div style="font-size:12px;color:var(--text2);">Com. servicio: ${(agPct*100).toFixed(1)}% (mes 1) + licencia ${(li.pct*100).toFixed(0)}% (meses 2–3)</div>`}
+      <div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:4px;">
+        ${msCls.map(cl=>{const on=isClienteOn(cl);const clSrvs=_srvs.filter(s=>s.cliente_id===cl.id);const chips=clSrvs.map(s=>`<span class="badge ${SRV_BADGES[s.tipo]||'b-gray'}">${SRV_LABELS[s.tipo]||s.tipo} ${fmt$(s.precio)}</span>`).join('');return`<span class="info-chip"><span class="badge ${on?'b-on':'b-off'}">${on?'On':'Off'}</span><strong>${cl.nombre}</strong>${chips}<span style="opacity:.6;">(${cl.fecha_inicio})</span></span>`;}).join('')}
+      </div>
+    </div>`;
+  }).join('')||`<div class="empty">No hay afiliados ${_afFilter==='activos'?'activos':_afFilter==='inactivos'?'inactivos':''}</div>`;
+}
+
+function renderClientes(){
+  const filterAf=document.getElementById('cl-filter')?.value||'';
+  const todas=getAllComisiones();
+  const lista=filterAf?_cls.filter(c=>c.afiliado_id===filterAf):_cls;
+  document.getElementById('clientes-body').innerHTML=lista.map(cl=>{
+    const af=_afs.find(a=>a.id===cl.afiliado_id);
+    const total=todas.filter(c=>c.clienteId===cl.id).reduce((s,c)=>s+c.monto,0);
+    const on=isClienteOn(cl);
+    const tipL=af?(af.tipo==='agencia'?'<span class="badge b-purple">Agencia</span>':'<span class="badge b-teal">Partner</span>'):'—';
+    const clSrvs=_srvs.filter(s=>s.cliente_id===cl.id);
+    const srvHtml=clSrvs.length?clSrvs.map(s=>`<span class="badge ${SRV_BADGES[s.tipo]||'b-gray'}" style="margin:1px;">${SRV_LABELS[s.tipo]||s.tipo} ${fmt$(s.precio)}</span>`).join(''):'<span style="color:var(--text3);">—</span>';
+    return`<tr><td><strong>${cl.nombre}</strong></td><td>${af?af.nombre:'—'}</td><td>${tipL}</td><td style="max-width:180px;">${srvHtml}</td><td>${cl.fecha_inicio||'—'}</td><td><span class="badge ${on?'b-on':'b-off'}">${on?'On':'Off'}</span></td><td>${fmt$(cl.precio_licencia)}</td><td>${fmt$(total)}</td><td><button class="btn btn-sm" onclick="editCliente('${cl.id}')">✏️</button> <button class="btn btn-sm btn-danger" onclick="eliminarCliente('${cl.id}','${cl.nombre}')">🗑</button></td></tr>`;
+  }).join('')||'<tr><td colspan="9"><div class="empty">Sin clientes</div></td></tr>';
+}
+
+function renderComisiones(){
+  const todas=getAllComisiones().sort((a,b)=>a.mesDate-b.mesDate);
+  const fil=_comFilter==='todos'?todas:_comFilter==='pendiente'?todas.filter(c=>!c.pagado&&c.mesDate<=NOW):_comFilter==='pagado'?todas.filter(c=>c.pagado):todas.filter(c=>!c.pagado&&c.mesDate>NOW);
+  document.getElementById('comisiones-body').innerHTML=fil.map(c=>{
+    const tipB=c.afiliado.tipo==='agencia'?'<span class="badge b-purple">Agencia</span>':'<span class="badge b-teal">Partner</span>';
+    let st,acc='';
+    if(c.pagado){st=`<span class="badge b-green" style="cursor:pointer;" onclick="verComprobante('${c.clienteId}',${c.mesIdx})">✓ Pagado${c.pago?.fecha_pago?' · '+fmtDate(c.pago.fecha_pago):''}</span>`;}
+    else if(c.mesDate<=NOW){st='<span class="badge b-amber">Pendiente</span>';acc=`<button class="btn btn-sm btn-primary" onclick="abrirPagar('${c.key}')">Pagar</button>`;}
+    else{st='<span class="badge b-gray">Programado</span>';}
+    return`<tr><td>${c.afiliado.nombre}</td><td>${tipB}</td><td>${c.clienteNombre}</td><td>${c.mes}</td><td style="font-size:12px;color:var(--text2);max-width:180px;">${c.concepto}</td><td>${(c.pct*100).toFixed(1)}%</td><td><strong>${fmt$(c.monto)}</strong></td><td>${st}</td><td>${acc}</td></tr>`;
+  }).join('')||'<tr><td colspan="9"><div class="empty">Sin comisiones</div></td></tr>';
+}
+
+function abrirPagar(key){
+  _pagarKey=key;
+  const com=getAllComisiones().find(c=>c.key===key);if(!com)return;
+  document.getElementById('pagar-info').innerHTML=`<strong>${com.afiliado.nombre}</strong> · ${com.clienteNombre}<br>${com.concepto} · ${com.mes}<br>Monto: <strong>${fmt$(com.monto)}</strong>`;
+  document.getElementById('pagar-fecha').value=new Date().toISOString().split('T')[0];
+  document.getElementById('pagar-monto').value=com.monto.toFixed(2);
+  document.getElementById('pagar-notas').value='';
+  const pf=document.getElementById('pagar-file');if(pf)pf.value='';
+  openModal('modalPagar');
+}
+
+async function confirmarPago(){
+  if(!_pagarKey)return;
+  const parts=_pagarKey.split('-');const mesIdx=parseInt(parts.pop());const clId=parts.join('-');
+  const data={cliente_id:clId,mes_num:mesIdx,fecha_pago:document.getElementById('pagar-fecha').value,monto:document.getElementById('pagar-monto').value,notas:document.getElementById('pagar-notas').value};
+  const file=IS_SERVER?(document.getElementById('pagar-file')?.files[0]||null):null;
+  try{await DB.savePago(data,file);toast('✅ Pago registrado');closeModal('modalPagar');await loadAll();}
+  catch(e){toast('❌ Error al registrar pago');}
+}
+
+function verComprobante(clId,mesIdx){
+  const pago=_pagos.find(p=>p.cliente_id===clId&&parseInt(p.mes_num)===mesIdx);if(!pago)return;
+  let html=`<div style="display:flex;gap:16px;flex-wrap:wrap;font-size:13px;color:var(--text2);margin-bottom:12px;padding:10px;background:var(--bg2);border-radius:var(--r);"><span>📅 ${fmtDate(pago.fecha_pago)}</span><span>💰 ${fmt$(pago.monto)}</span>${pago.notas?`<span>📝 ${pago.notas}</span>`:''}</div>`;
+  if(pago.comprobante_path){
+    if(pago.comprobante_path.startsWith('data:image')||/\.(jpg|jpeg|png|gif|webp)$/i.test(pago.comprobante_nombre||'')){html+=`<img src="${pago.comprobante_path}" style="max-width:100%;border-radius:var(--r);">`;}
+    else{html+=`<a href="${pago.comprobante_path}" target="_blank" class="btn">📄 ${pago.comprobante_nombre||'comprobante.pdf'}</a>`;}
+  }else{html+='<p style="color:var(--text2);">Sin comprobante adjunto</p>';}
+  document.getElementById('comprobante-content').innerHTML=html;openModal('modalComprobante');
+}
+
+function onAfTipoChange(){
+  document.getElementById('af-agencia-section').classList.toggle('hidden',document.getElementById('af-tipo').value!=='agencia');
+}
+function updateAfPreview(){
+  const v=parseFloat(document.getElementById('af-comision').value);
+  const prev=document.getElementById('af-preview');
+  if(v>0){prev.classList.remove('hidden');prev.textContent=`✓ Mes 1: ${v}% sobre el servicio · Meses 2 y 3: % por nivel sobre licencia.`;}
+  else prev.classList.add('hidden');
+}
+
+async function guardarAfiliado(){
+  const nombre=document.getElementById('af-nombre').value.trim();
+  if(!nombre)return toast('⚠️ Ingresa el nombre');
+  const id=document.getElementById('af-id').value;
+  const tipo=document.getElementById('af-tipo').value;
+  const cpRaw=document.getElementById('af-comision').value;
+  const ca=(tipo==='agencia'&&cpRaw!==''&&!isNaN(parseFloat(cpRaw)))?parseFloat(cpRaw):-1;
+  const data={nombre,email:document.getElementById('af-email').value.trim(),tipo,ingreso:document.getElementById('af-ingreso').value,notas:document.getElementById('af-notas').value.trim(),comision_agencia:ca};
+  try{await DB.saveAf(data,id||null);toast(id?'✅ Actualizado':'✅ Afiliado creado');closeModal('modalAfiliado');await loadAll();}
+  catch(e){toast('❌ Error al guardar');}
+}
+
+function editAfiliado(id){
+  const af=_afs.find(a=>a.id===id);if(!af)return;
+  document.getElementById('modal-af-title').textContent='Editar afiliado';
+  document.getElementById('af-id').value=af.id;
+  document.getElementById('af-nombre').value=af.nombre;
+  document.getElementById('af-email').value=af.email||'';
+  document.getElementById('af-tipo').value=af.tipo||'partner';
+  document.getElementById('af-ingreso').value=af.ingreso||'';
+  document.getElementById('af-notas').value=af.notas||'';
+  const cp=af.comision_agencia!=null&&parseFloat(af.comision_agencia)>0?parseFloat(af.comision_agencia):'';
+  document.getElementById('af-comision').value=cp;
+  onAfTipoChange();updateAfPreview();
+  openModal('modalAfiliado');
+}
+
+function onAfClienteChange(){
+  const af=_afs.find(a=>a.id===document.getElementById('cl-afiliado')?.value);
+  const srvSec=document.getElementById('cl-servicios-section');
+  const infoEl=document.getElementById('cl-srv-info');
+  if(af&&af.tipo==='agencia'){
+    srvSec.classList.remove('hidden');
+    const agPct=getAgenciaServicioPct(af);
+    infoEl.textContent=agPct!==null?`Agencia con ${(agPct*100).toFixed(1)}% sobre servicios (mes 1). Añade los servicios contratados.`:`Esta agencia aún no tiene % de comisión definido. Edítala para añadirlo.`;
+  }else{srvSec.classList.add('hidden');}
+  updateClPreview();
+}
+function onNewSrvTipoChange(){document.getElementById('new-srv-nombre-wrap').classList.toggle('hidden',document.getElementById('new-srv-tipo').value!=='otro');}
+function addServicio(){
+  const tipo=document.getElementById('new-srv-tipo').value;
+  const precio=parseFloat(document.getElementById('new-srv-precio').value);
+  if(!precio||precio<=0)return toast('⚠️ Ingresa el precio del servicio');
+  const nombre=document.getElementById('new-srv-nombre').value.trim();
+  _newServicios.push({tipo,nombre_personalizado:tipo==='otro'?nombre:'',precio});
+  document.getElementById('new-srv-precio').value='';document.getElementById('new-srv-nombre').value='';
+  renderServiciosModal();updateClPreview();
+}
+function removeServicio(idx){_newServicios.splice(idx,1);renderServiciosModal();updateClPreview();}
+function renderServiciosModal(){
+  const lista=document.getElementById('cl-servicios-lista');
+  if(!_newServicios.length){lista.innerHTML='<div style="font-size:12px;color:var(--text3);padding:4px 0;">Sin servicios añadidos aún.</div>';return;}
+  lista.innerHTML=_newServicios.map((s,i)=>`<div class="service-item"><span><span class="badge ${SRV_BADGES[s.tipo]||'b-gray'}">${SRV_LABELS[s.tipo]||s.tipo}</span>${s.nombre_personalizado?' '+s.nombre_personalizado:''}</span><span style="color:var(--green);font-weight:600;">${fmt$(s.precio)}</span><span style="font-size:12px;color:var(--text3);">→ com. mes 1</span><button class="btn btn-sm btn-danger" onclick="removeServicio(${i})">✕</button></div>`).join('');
+}
+function updateClPreview(){
+  const afId=document.getElementById('cl-afiliado')?.value;
+  const af=_afs.find(a=>a.id===afId);
+  const lic=parseFloat(document.getElementById('cl-precio-lic').value)||69;
+  const prev=document.getElementById('cl-preview');
+  if(!af){prev.classList.add('hidden');return;}
+  const licPct=getLicenciaPct(af);
+  const isAgencia=af.tipo==='agencia';const agPct=getAgenciaServicioPct(af);
+  let com1;
+  if(isAgencia&&_newServicios.length>0){const totalSrv=_newServicios.reduce((s,x)=>s+x.precio,0);const pct=agPct!==null?agPct:licPct;com1=totalSrv*pct;}
+  else{com1=lic*licPct;}
+  const com2=lic*licPct;const com3=lic*licPct;
+  prev.classList.remove('hidden');
+  let html=`💰 Estimado 3 meses: Mes 1: ${fmt$(com1)}`;
+  if(isAgencia&&_newServicios.length>0){const t=_newServicios.reduce((s,x)=>s+x.precio,0);const p=agPct!==null?agPct:licPct;html+=` (${(p*100).toFixed(1)}% sobre ${fmt$(t)} en servicios)`;}
+  html+=` · Mes 2: ${fmt$(com2)} · Mes 3: ${fmt$(com3)} = <strong>${fmt$(com1+com2+com3)}</strong>`;
+  prev.innerHTML=html;
+}
+
+async function guardarCliente(){
+  const nombre=document.getElementById('cl-nombre').value.trim();
+  const afId=document.getElementById('cl-afiliado').value;
+  if(!nombre||!afId)return toast('⚠️ Completa nombre y afiliado');
+  const fechaRaw=document.getElementById('cl-fecha').value;
+  const id=document.getElementById('cl-id').value;
+  const data={nombre,email:document.getElementById('cl-email').value.trim(),afiliado_id:afId,fecha_inicio:fechaRaw?monthKey(new Date(fechaRaw+'T00:00:00')):monthKey(new Date()),precio_licencia:parseFloat(document.getElementById('cl-precio-lic').value)||69,servicios:_newServicios};
+  try{await DB.saveCl(data,id||null);toast(id?'✅ Cliente actualizado':'✅ Cliente creado');closeModal('modalCliente');await loadAll();}
+  catch(e){toast('❌ Error al guardar');}
+}
+
+function editCliente(id){
+  const cl=_cls.find(c=>c.id===id);if(!cl)return;
+  document.getElementById('modal-cl-title').textContent='Editar cliente';
+  document.getElementById('cl-id').value=cl.id;
+  document.getElementById('cl-nombre').value=cl.nombre;
+  document.getElementById('cl-email').value=cl.email||'';
+  document.getElementById('cl-afiliado').value=cl.afiliado_id;
+  document.getElementById('cl-precio-lic').value=cl.precio_licencia||69;
+  _newServicios=_srvs.filter(s=>s.cliente_id===cl.id).map(s=>({tipo:s.tipo,nombre_personalizado:s.nombre_personalizado||'',precio:parseFloat(s.precio)||0}));
+  renderServiciosModal();onAfClienteChange();updateClPreview();
+  openModal('modalCliente');
+}
+
+async function eliminarCliente(id,nombre){
+  if(!confirm(`¿Eliminar al cliente "${nombre}"?`))return;
+  await DB.delCl(id);toast('🗑 Cliente eliminado');await loadAll();
+}
+
+const _origOpen=openModal;
+window.openModal=function(id){
+  if(id==='modalAfiliado'){
+    document.getElementById('modal-af-title').textContent='Nuevo afiliado';
+    document.getElementById('af-id').value='';
+    ['af-nombre','af-email','af-notas','af-comision'].forEach(x=>document.getElementById(x).value='');
+    document.getElementById('af-tipo').value='agencia';
+    document.getElementById('af-ingreso').value='';
+    document.getElementById('af-preview').classList.add('hidden');
+    onAfTipoChange();
+  }
+  if(id==='modalCliente'){
+    document.getElementById('modal-cl-title').textContent='Nuevo cliente';
+    document.getElementById('cl-id').value='';
+    ['cl-nombre','cl-email','cl-fecha'].forEach(x=>document.getElementById(x).value='');
+    document.getElementById('cl-precio-lic').value='69';
+    _newServicios=[];renderServiciosModal();
+    document.getElementById('cl-preview').classList.add('hidden');
+    document.getElementById('new-srv-precio').value='';
+    document.getElementById('new-srv-nombre').value='';
+    document.getElementById('new-srv-nombre-wrap').classList.add('hidden');
+    const sel=document.getElementById('cl-afiliado');
+    if(sel){sel.innerHTML=_afs.map(a=>`<option value="${a.id}">${a.nombre} (${a.tipo})</option>`).join('');onAfClienteChange();}
+  }
+  _origOpen(id);
+};
+
+loadAll();
+</script>
+</body>
+</html>
